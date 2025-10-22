@@ -18,9 +18,10 @@ function App() {
           </div>
           <h2 class="content__title">Все пиццы</h2>
           <div class="content__items">
-            <PizzaBlock />
-            <PizzaBlock /> <PizzaBlock /> <PizzaBlock /> <PizzaBlock />
-            <PizzaBlock /> <PizzaBlock /> <PizzaBlock /> <PizzaBlock />
+            <PizzaBlock title="Аррива!" price="350" />
+            <PizzaBlock title="Мясная" price="600" />
+            <PizzaBlock title="Маргарита" price="400" />
+            <PizzaBlock title="Мексиканская" price="550" />
           </div>
         </div>
       </div>

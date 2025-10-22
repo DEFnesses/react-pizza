@@ -1,4 +1,4 @@
-function PizzaBlock() {
+function PizzaBlock(props) {
   return (
     <div class="pizza-block">
       <img
@@ -6,7 +6,7 @@ function PizzaBlock() {
         src="https://media.dodostatic.net/image/r:584x584/0198bf2e5d2973a4bf5ec61161496f91.avif"
         alt="Pizza"
       />
-      <h4 class="pizza-block__title">Аррива!</h4>
+      <h4 class="pizza-block__title">{props.title}</h4>
       <div class="pizza-block__selector">
         <ul>
           <li class="active">тонкое</li>
@@ -19,7 +19,7 @@ function PizzaBlock() {
         </ul>
       </div>
       <div class="pizza-block__bottom">
-        <div class="pizza-block__price">от 395 ₽</div>
+        <div class="pizza-block__price">от {props.price} ₽</div>
         <div class="button button--outline button--add">
           <svg
             width="12"
