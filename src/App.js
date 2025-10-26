@@ -1,10 +1,11 @@
-import logo from "./logo.svg";
+import "./assets/img/pizza-logo.svg";
 import "./App.css";
 import Header from "./components/Header";
 import Categories from "./components/Categories";
 import Sort from "./components/Sort";
 import PizzaBlock from "./components/PizzaBlock";
 import "./scss/app.scss";
+import pizzas from "./assets/pizzas.json";
 
 function App() {
   return (
@@ -18,10 +19,10 @@ function App() {
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
-            <PizzaBlock title="Аррива!" price="350" />
-            <PizzaBlock title="Мясная" price="600" />
-            <PizzaBlock title="Маргарита" price="400" />
-            <PizzaBlock title="Мексиканская" price="550" />
+            {pizzas.map((obj) => (
+              <PizzaBlock {... obj}
+              />
+            ))}
           </div>
         </div>
       </div>
