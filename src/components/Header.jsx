@@ -1,3 +1,5 @@
+import logo from "../assets/img/pizza-logo.svg";
+
 import { Link } from "react-router-dom";
 
 function Header() {
@@ -8,7 +10,7 @@ function Header() {
           <div className="header__logo">
             <img
               width="38"
-              src="../assets/img/pizza-logo.svg"
+              src={logo}
               alt="Pizza logo"
             />
             <div>
