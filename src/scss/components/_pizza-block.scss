@@ -5,6 +5,10 @@
   text-align: center;
   margin-bottom: 65px;
 
+@media (max-width: 420px) {
+      width: 240px;
+    }
+
   &-wrapper {
     display: flex;
     justify-content: center;
@@ -12,6 +16,10 @@
 
   &__image {
     width: 260px;
+
+    @media (max-width: 420px) {
+      width: 200px;
+    }
   }
 
   &__title {
@@ -65,5 +73,9 @@
     font-size: 22px;
     line-height: 27px;
     letter-spacing: 0.015em;
+
+    @media (max-width: 420px) {
+      font-size: 18px;
+    }
   }
 }

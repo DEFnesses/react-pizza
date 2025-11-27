@@ -1,9 +1,14 @@
-@import '../variables';
+@import "../variables";
 
 .categories {
+
   ul {
     display: flex;
     flex-wrap: wrap;
+
+    @media (max-width:940px) {
+      justify-content: center;
+    }
 
     li {
       background-color: #f9f9f9;
@@ -14,6 +19,10 @@
       cursor: pointer;
       transition: background-color 0.1s ease-in-out;
       @include noselect();
+
+      @media (max-width: 420px) {
+        padding: 5px 10px;
+      }
 
       &:hover {
         background-color: darken(#f9f9f9, 2%);
