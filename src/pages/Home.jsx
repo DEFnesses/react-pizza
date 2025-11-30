@@ -7,25 +7,50 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import pizzas from "../assets/pizzas.json";
 
 const Home = () => {
+  const [items, setItems] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    setIsLoading(false);
+  const [categoryId, setCategoryId] = React.useState(0);
+  const [sortType, setSortType] = React.useState({
+    name: "популярности",
+    sortProperty: "rating",
   });
 
+  React.useEffect(() => {
+    setIsLoading(true);
+    const filteredPizzas = categoryId
+      ? pizzas.filter((obj) => Number(obj.category) === Number(categoryId))
+      : pizzas;
+
+    const sortedPizzas = sortType
+      ? pizzas.sort((obj) => Number(obj.sort) === Number(sortType))
+      : pizzas;
+
+    setItems(filteredPizzas,sortedPizzas);
+    setIsLoading(false);
+    console.log("выбрана", sortedPizzas);
+
+    window.scrollTo(0, 0);
+  }, [categoryId,sortType]);
+
   return (
-    <>
+    <div className="container">
       <div className="content__top">
-        <Categories />
-        <Sort />
+        <Categories
+          value={categoryId}
+          onChangeCategory={(i) => setCategoryId(i)}
+        />
+        <Sort value={sortType} onChangeSort={(i) => setSortType(i)} />
       </div>
+
       <h2 className="content__title">Все пиццы</h2>
+      <div></div>
+
       <div className="content__items">
         {isLoading
           ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-          : pizzas.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
+          : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
       </div>
-    </>
+    </div>
   );
 };
 
