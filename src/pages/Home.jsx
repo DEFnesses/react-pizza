@@ -7,7 +7,7 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import pizzas from "../assets/pizzas.json";
 
 const Home = () => {
-  const [items, setItems] = React.useState(0);
+  const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [categoryId, setCategoryId] = React.useState(0);
   const [sortType, setSortType] = React.useState({
@@ -21,13 +21,23 @@ const Home = () => {
       ? pizzas.filter((obj) => Number(obj.category) === Number(categoryId))
       : pizzas;
 
-    const sortedPizzas = sortType
-      ? pizzas.sort((obj) => Number(obj.sort) === Number(sortType))
-      : pizzas;
+    const sortedPizzas = [...filteredPizzas].sort((a, b) => {
+      switch (sortType.sortProperty) {
+        case 'rating':
+          return Number(b.rating) - Number(a.rating); // по убыванию
+        case 'price':
+          return Number(b.price) - Number(a.price); // по цене
+        case 'title':
+            return a.title.localeCompare(b.title, 'ru', { sensitivity: 'base' }); // по алфавиту
+        default:
+          return 0;
+      }
+    });
 
-    setItems(filteredPizzas,sortedPizzas);
+    setItems(sortedPizzas);
     setIsLoading(false);
-    console.log("выбрана", sortedPizzas);
+    
+    console.log('sortProperty:', sortType.sortProperty);
 
     window.scrollTo(0, 0);
   }, [categoryId,sortType]);
