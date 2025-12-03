@@ -6,7 +6,7 @@ import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import pizzas from "../assets/pizzas.json";
 
-const Home = () => {
+const Home = ({ searchValue }) => {
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [categoryId, setCategoryId] = React.useState(0);
@@ -14,6 +14,20 @@ const Home = () => {
     name: "популярности",
     sortProperty: "rating",
   });
+
+  const things = items
+    .filter((obj) => {
+      if (obj.title.toLowerCase().includes(searchValue.toLowerCase())){
+        return true;
+      }
+
+      return false
+    })
+    .map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+
+  const skeletons = [...new Array(6)].map((_, index) => (
+    <Skeleton key={index} />
+  ));
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -23,12 +37,12 @@ const Home = () => {
 
     const sortedPizzas = [...filteredPizzas].sort((a, b) => {
       switch (sortType.sortProperty) {
-        case 'rating':
+        case "rating":
           return Number(b.rating) - Number(a.rating); // по убыванию
-        case 'price':
+        case "price":
           return Number(b.price) - Number(a.price); // по цене
-        case 'title':
-            return a.title.localeCompare(b.title, 'ru', { sensitivity: 'base' }); // по алфавиту
+        case "title":
+          return a.title.localeCompare(b.title, "ru", { sensitivity: "base" }); // по алфавиту
         default:
           return 0;
       }
@@ -36,11 +50,11 @@ const Home = () => {
 
     setItems(sortedPizzas);
     setIsLoading(false);
-    
-    console.log('sortProperty:', sortType.sortProperty);
+
+    console.log("sortProperty:", sortType.sortProperty);
 
     window.scrollTo(0, 0);
-  }, [categoryId,sortType]);
+  }, [categoryId, sortType]);
 
   return (
     <div className="container">
@@ -55,11 +69,7 @@ const Home = () => {
       <h2 className="content__title">Все пиццы</h2>
       <div></div>
 
-      <div className="content__items">
-        {isLoading
-          ? [...new Array(6)].map((_, index) => <Skeleton key={index} />)
-          : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
-      </div>
+      <div className="content__items">{isLoading ? skeletons : things}</div>
     </div>
   );
 };
