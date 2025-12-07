@@ -1,28 +1,38 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import { setCategoryId } from "../redux/slices/filterSlice";
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import pizzas from "../assets/pizzas.json";
+import Pagination from "../components/Pagination";
+import { AppContext } from "../App";
 
-const Home = ({ searchValue }) => {
+const Home = () => {
+  const dispatch = useDispatch();
+  const { categoryId, sort } = useSelector((state) => state.filter);
+  
+
+  const { searchValue } = React.useContext(AppContext);
+
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [categoryId, setCategoryId] = React.useState(0);
-  const [sortType, setSortType] = React.useState({
-    name: "популярности",
-    sortProperty: "rating",
-  });
+
+  const onChangeCategory = (id) => {
+    dispatch(setCategoryId(id));
+  };
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(items.length / itemsPerPage);
 
   const things = items
-    .filter((obj) => {
-      if (obj.title.toLowerCase().includes(searchValue.toLowerCase())){
-        return true;
-      }
-
-      return false
-    })
+    .filter((obj) =>
+      obj.title.toLowerCase().includes(searchValue.toLowerCase())
+    )
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .map((obj) => <PizzaBlock key={obj.id} {...obj} />);
 
   const skeletons = [...new Array(6)].map((_, index) => (
@@ -31,16 +41,17 @@ const Home = ({ searchValue }) => {
 
   React.useEffect(() => {
     setIsLoading(true);
+
     const filteredPizzas = categoryId
       ? pizzas.filter((obj) => Number(obj.category) === Number(categoryId))
       : pizzas;
 
     const sortedPizzas = [...filteredPizzas].sort((a, b) => {
-      switch (sortType.sortProperty) {
+      switch (sort.sortProperty) {
         case "rating":
-          return Number(b.rating) - Number(a.rating); // по убыванию
+          return Number(b.rating) - Number(a.rating);
         case "price":
-          return Number(b.price) - Number(a.price); // по цене
+          return Number(b.price) - Number(a.price);
         case "title":
           return a.title.localeCompare(b.title, "ru", { sensitivity: "base" }); // по алфавиту
         default:
@@ -51,25 +62,25 @@ const Home = ({ searchValue }) => {
     setItems(sortedPizzas);
     setIsLoading(false);
 
-    console.log("sortProperty:", sortType.sortProperty);
-
     window.scrollTo(0, 0);
-  }, [categoryId, sortType]);
+  }, [categoryId, sort.sortProperty, searchValue]);
 
   return (
     <div className="container">
       <div className="content__top">
-        <Categories
-          value={categoryId}
-          onChangeCategory={(i) => setCategoryId(i)}
-        />
-        <Sort value={sortType} onChangeSort={(i) => setSortType(i)} />
+        <Categories value={categoryId} onChangeCategory={onChangeCategory} />
+        <Sort />
       </div>
 
       <h2 className="content__title">Все пиццы</h2>
       <div></div>
 
       <div className="content__items">{isLoading ? skeletons : things}</div>
+      <Pagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 };
