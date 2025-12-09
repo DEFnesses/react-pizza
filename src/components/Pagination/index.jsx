@@ -3,9 +3,9 @@ import ReactPaginate from "react-paginate";
 
 import styles from "./Pagination.module.scss";
 
-const Pagination = ({ currentPage, setCurrentPage, totalPages }) => {
+const Pagination = ({ currentPage, pageCount, onChangePage}) => {
   const handlePageClick = (event) => {
-    setCurrentPage(event.selected + 1);
+    onChangePage(event.selected + 1);
     window.scrollTo(0, 0);
   };
   return (
@@ -17,8 +17,8 @@ const Pagination = ({ currentPage, setCurrentPage, totalPages }) => {
         nextLabel=">"
         onPageChange={handlePageClick}
         pageRangeDisplayed={5}
-        pageCount={totalPages}
-        forcePage={currentPage - 1}
+        pageCount={pageCount}          
+        forcePage={currentPage - 1} 
         renderOnZeroPageCount={null}
       />
     </div>

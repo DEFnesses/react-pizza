@@ -1,9 +1,16 @@
 import React from "react";
+import qs from "qs";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { setCategoryId } from "../redux/slices/filterSlice";
+import {
+  setCategoryId,
+  setCurrentPage,
+  setFilters,
+} from "../redux/slices/filterSlice";
+
 import Categories from "../components/Categories";
-import Sort from "../components/Sort";
+import Sort, { sortList } from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import pizzas from "../assets/pizzas.json";
@@ -11,9 +18,11 @@ import Pagination from "../components/Pagination";
 import { AppContext } from "../App";
 
 const Home = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { categoryId, sort } = useSelector((state) => state.filter);
-  
+  const { categoryId, sort, currentPage } = useSelector(
+    (state) => state.filter
+  );
 
   const { searchValue } = React.useContext(AppContext);
 
@@ -24,20 +33,41 @@ const Home = () => {
     dispatch(setCategoryId(id));
   };
 
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 4;
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const onChangePage = (number) => {
+    dispatch(setCurrentPage(number));
+  };
 
-  const things = items
-    .filter((obj) =>
-      obj.title.toLowerCase().includes(searchValue.toLowerCase())
-    )
+  const filteredBySearch = items.filter((obj) =>
+    obj.title.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const itemsPerPage = 4;
+  const totalPages = Math.ceil(filteredBySearch.length / itemsPerPage);
+
+  const things = filteredBySearch
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .map((obj) => <PizzaBlock key={obj.id} {...obj} />);
 
   const skeletons = [...new Array(6)].map((_, index) => (
     <Skeleton key={index} />
   ));
+
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+
+      const sort = sortList.find(
+        (obj) => obj.sortProperty === params.sortProperty
+      );
+
+      dispatch(
+        setFilters({
+          ...params,
+          sort,
+        })
+      );
+    }
+  }, []);
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -62,8 +92,20 @@ const Home = () => {
     setItems(sortedPizzas);
     setIsLoading(false);
 
+    dispatch(setCurrentPage(1));
+
     window.scrollTo(0, 0);
-  }, [categoryId, sort.sortProperty, searchValue]);
+  }, [categoryId, sort.sortProperty, searchValue, dispatch]);
+
+  React.useEffect(() => {
+    const queryString = qs.stringify({
+      sortProperty: sort.sortProperty,
+      categoryId,
+      dispatch,
+    });
+
+    navigate(`?${queryString}`);
+  }, [categoryId, sort.sortProperty, searchValue, dispatch]);
 
   return (
     <div className="container">
@@ -78,8 +120,8 @@ const Home = () => {
       <div className="content__items">{isLoading ? skeletons : things}</div>
       <Pagination
         currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalPages={totalPages}
+        pageCount={totalPages}
+        onChangePage={onChangePage}
       />
     </div>
   );
