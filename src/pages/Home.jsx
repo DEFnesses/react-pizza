@@ -64,6 +64,7 @@ const Home = () => {
         setFilters({
           ...params,
           sort,
+          currentPage: params.currentPage ? Number(params.currentPage) : 1
         })
       );
     }
@@ -92,20 +93,18 @@ const Home = () => {
     setItems(sortedPizzas);
     setIsLoading(false);
 
-    dispatch(setCurrentPage(1));
-
     window.scrollTo(0, 0);
-  }, [categoryId, sort.sortProperty, searchValue, dispatch]);
+  }, [categoryId, sort.sortProperty, searchValue]);
 
   React.useEffect(() => {
     const queryString = qs.stringify({
       sortProperty: sort.sortProperty,
       categoryId,
-      dispatch,
+      currentPage,
     });
 
     navigate(`?${queryString}`);
-  }, [categoryId, sort.sortProperty, searchValue, dispatch]);
+  }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
   return (
     <div className="container">

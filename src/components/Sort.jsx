@@ -1,27 +1,41 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setSort } from "../redux/slices/filterSlice";
+import react from "react";
 
 export const sortList = [
-    { name: "популярности", sortProperty: "rating" }, 
-    { name: "цене", sortProperty: "price" }, 
-    { name: "алфавиту", sortProperty: "title" }];
+  { name: "популярности", sortProperty: "rating" },
+  { name: "цене", sortProperty: "price" },
+  { name: "алфавиту", sortProperty: "title" },
+];
 
 function Sort() {
   const dispatch = useDispatch();
-  const sort = useSelector(state => state.filter.sort)
-
+  const sort = useSelector((state) => state.filter.sort);
+  const sortRef = React.useRef();
 
   const [open, setOpen] = React.useState(false);
-  
 
   const onClickListItem = (obj) => {
-    dispatch(setSort(obj))
+    dispatch(setSort(obj));
     setOpen(false);
   };
 
+  React.useEffect(() => {
+    const handleClick = (event) => {
+        if (sortRef.current?.contains(event.target)) {
+            console.log("был клик на сорт");
+        } else {console.log("мимо");
+            
+        }
+    };
+    
+    document.body.addEventListener('click', handleClick);
+    return () => document.body.removeEventListener('click', handleClick);
+}, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -45,7 +59,9 @@ function Sort() {
               <li
                 key={i}
                 onClick={() => onClickListItem(obj)}
-                className={sort.sortProperty === obj.sortProperty ? "active" : ""}
+                className={
+                  sort.sortProperty === obj.sortProperty ? "active" : ""
+                }
               >
                 {obj.name}
               </li>
@@ -58,4 +74,3 @@ function Sort() {
 }
 
 export default Sort;
-
