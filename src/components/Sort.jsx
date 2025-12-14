@@ -23,16 +23,14 @@ function Sort() {
 
   React.useEffect(() => {
     const handleClick = (event) => {
-        if (sortRef.current?.contains(event.target)) {
-            console.log("был клик на сорт");
-        } else {console.log("мимо");
-            
-        }
+      if (!sortRef.current?.contains(event.target)) {
+        setOpen(false);
+      }
     };
-    
-    document.body.addEventListener('click', handleClick);
-    return () => document.body.removeEventListener('click', handleClick);
-}, []);
+
+    document.body.addEventListener("click", handleClick);
+    return () => document.body.removeEventListener("click", handleClick);
+  }, []);
 
   return (
     <div ref={sortRef} className="sort">
