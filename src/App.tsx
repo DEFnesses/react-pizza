@@ -10,7 +10,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./scss/app.scss";
 
-export const AppContext = React.createContext();
+interface AppContextType {
+  searchValue: string;
+  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const AppContext = React.createContext<AppContextType | null>(null);
 
 function App() {
   const [searchValue, setSearchValue] = React.useState("");
